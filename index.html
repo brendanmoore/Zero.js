@@ -67,7 +67,7 @@
     .success(function(r){ $('#readme').text(this.responseText); })
     .send();
   //this will be on github pages so we can get the user from the subdomain
-  if(true ||/github\.com$/.test(window.location.host)){
+  if(/github\.com$/.test(window.location.host)){
     var repo = "http://github.com/"+window.location.host.split(".")[0]+"/"+window.location.pathname.split("/")[1];
     $('.hero-unit p').css({visibility:'visible'}).find('a').each(function(){
       switch(this.id){

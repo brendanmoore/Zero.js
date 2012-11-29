@@ -29,6 +29,7 @@
     if(s instanceof Zero){ return s; }
     //in case we called this without 'new' (most common case!)
     if(!(this instanceof Zero)){ return new Zero(s,c); }
+    this.nodes = [];
     //now do different things based on what was passed (see jQuery source! blatantly used their tests)
     if(!s){ return this; }
     //DOM Element
@@ -60,8 +61,12 @@
   Object.defineProperty(Zp, "length", { get: function(){ return this.nodes.length; } });
   //subset of results.
   Zp.find = function(sel){
-    var z = Zero(); //out holder for results.
-    this.each(function(){ z.nodes.push(this); });
+    var z = new Zero(); //out holder for results.
+    this.each(function(){
+      slice(this.querySelectorAll(sel)).forEach(function(n){
+        z.nodes.push(n);
+      });
+    });
     arrayAccess(z);
     return z;
   };

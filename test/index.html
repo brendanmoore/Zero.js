@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+  <title>Zero.js - test suite</title>
+  <script src="../src/Zero.js"></script>
+  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-icons.min.css" rel="stylesheet">
+  <style>
+    body { margin-top: 30px; }
+    i.zero {
+      display:inline-block;
+      width:40px;
+      height:40px;
+      border:10px solid;
+      border-radius:40px;
+      position:relative;
+      top:8px;
+      color: OrangeRed;
+    }
+    i.zero:after {
+      content: " ";
+      border:5px solid;
+      height:0;
+      width:70px;
+      position:absolute;
+      top:15px;
+      left: -20px;
+      -webkit-transform: rotate(-60deg) skew(30deg);
+      -moz-transform: rotate(-60deg) skew(30deg);
+      -ms-transform: rotate(-60deg) skew(30deg);
+      -o-transform: rotate(-60deg) skew(30deg);
+      transform: rotate(-60deg) skew(30deg);
+    }
+    .btn-warning {
+      /* so I don't have to roll my own bootstrap but still have an orange button! */
+      -webkit-filter: hue-rotate(325deg) saturate(350%);
+      -moz-filter: hue-rotate(325deg) saturate(350%);
+      -ms-filter: hue-rotate(325deg) saturate(350%);
+      -o-filter: hue-rotate(325deg) saturate(350%);
+      filter: hue-rotate(325deg) saturate(350%);
+    }
+    .hero-unit h1 { margin-bottom: 15px; }
+    .hero-unit p { text-align: right; }
+    #tests p { display:inline; }
+    #tests ul { margin-bottom:0; }
+    #test-only {
+      position:absolute;
+      right:300%; /* this should be offscreen */
+    }
+    pre, code { font-family:'Droid Sans Mono Slashed', 'Consolas Slashed', 'Droid Sans Mono', 'Consolas', monospace; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="hero-unit">
+    <h1><i class="zero"></i> Zero.js <small>simple test suite</small></h1>
+    <p><a href="#show_passes" class="btn btn-warning">show passes</a> <a href="#" class="btn">hide passes</a></p>
+  </div>
+  <div id="test-only">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div><h1><i></i><small>testing testing testing!</small></h1></div>
+
+  </div>
+  <div class="row">
+    <div class="span12">
+      <pre><code id="tests">Test Results: </code></pre>
+      <script src="../../MrT/MrT.js"></script>
+      <script type="text/javascript">
+        MrT('simple selector gets correct single node', function(t){
+          var d = $('#test-only');
+          if(d.length === 1 && d.get() === d[0] && d.get() === document.getElementById('test-only')){
+            t.pass();
+          }
+          t.fail();
+        });
+        MrT('complex selector get correct single node', function(t){
+          var d = $('body #test-only > div:nth-child(5) *:first-child i + small');
+          if(d.length === 1 && d.get() === d[0] && d.text() === 'testing testing testing!'){
+            t.pass();
+          }
+          t.fail();
+        });
+      </script>
+    </div>
+  </div>
+</div>

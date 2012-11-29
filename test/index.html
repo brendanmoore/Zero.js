@@ -40,6 +40,7 @@
     }
     .hero-unit h1 { margin-bottom: 15px; }
     .hero-unit p { text-align: right; }
+    #test-button { float:left; }
     #tests p { display:inline; }
     #tests ul { margin-bottom:0; }
     #test-only {
@@ -53,7 +54,11 @@
 <div class="container">
   <div class="hero-unit">
     <h1><i class="zero"></i> Zero.js <small>simple test suite</small></h1>
-    <p><a href="#show_passes" class="btn btn-warning">show passes</a> <a href="#" class="btn">hide passes</a></p>
+    <p>
+      <a id="test-button" href="../" class="btn btn-info">&#11013; Back</a>
+      <a href="#show_passes" class="btn btn-warning">show passes</a>
+      <a href="#" class="btn">hide passes</a>
+    </p>
   </div>
   <div id="test-only">
     <div></div>

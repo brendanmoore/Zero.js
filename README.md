@@ -12,3 +12,8 @@ similiar tasks.
 ## Zero browser support
 
 Tested in Chrome 24+ only...
+
+## Zero Unit Tests
+
+Unit Testing in progress, but I haven't really decided on the API yet. So there's
+no spec. I will add more in time.

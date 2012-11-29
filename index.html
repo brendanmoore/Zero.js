@@ -34,9 +34,9 @@
       margin-bottom: 15px;
     }
     .hero-unit p {
-      visibility:hidden;
       text-align:right;
     }
+    #test-button { float:left; }
     .btn-warning {
       /* so I don't have to roll my own bootstrap but still have an orange button! */
       -webkit-filter: hue-rotate(325deg) saturate(350%);
@@ -54,7 +54,12 @@
 <div class="container">
   <div class="hero-unit">
     <h1><i class="zero"></i> Zero.js <small>a lightweight jQuery alternative</small></h1>
-    <p><a id="zip" class="btn">Zipball</a> <a id="tar" class="btn btn">Tarball</a> <a id="git" class="btn btn-warning">Source on GitHub</a></p>
+    <p>
+      <a id="zip" class="btn">Zipball</a>
+      <a id="tar" class="btn btn">Tarball</a>
+      <a id="git" class="btn btn-warning">Source on GitHub</a>
+      <a id="test-button" href="test/" class="btn btn-info">Tests</a>
+    </p>
   </div>
   <div class="row">
     <div class="span12">
@@ -67,16 +72,17 @@
     .success(function(r){ $('#readme').text(this.responseText); })
     .send();
   //this will be on github pages so we can get the user from the subdomain
-  if(/github\.com$/.test(window.location.host)){
-    var repo = "http://github.com/"+window.location.host.split(".")[0]+"/"+window.location.pathname.split("/")[1];
-    $('.hero-unit p').css({visibility:'visible'}).find('a').each(function(){
-      switch(this.id){
-        case "zip": $(this).attr('href', repo+"/zipball/master"); break;
-        case "tar": $(this).attr('href', repo+"/tarball/master"); break;
-        case "git": $(this).attr('href', repo); break;
-      }
-    });
-  }
+  var gh = /github\.com$/.test(window.location.host);
+  var repo = gh ? "http://github.com/"+window.location.host.split(".")[0]+"/"+window.location.pathname.split("/")[1] : "";
+  $('.hero-unit p').css({visibility:'visible'}).find('a').each(function(){
+    switch(this.id){
+      case "zip": $(this).attr('href', repo+"/zipball/master"); break;
+      case "tar": $(this).attr('href', repo+"/tarball/master"); break;
+      case "git": $(this).attr('href', repo); break;
+      case "test-button": return;
+    }
+    if(!gh){ $(this).css({display:'none'}); }
+  });
 </script>
 </body>
 </html>

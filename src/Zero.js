@@ -78,14 +78,14 @@
     z.each(function(i){ z[i] = this; });
   }, Query = function(s,c){
     var nodes = [];
-    !s.replace(reSimpleId, function(m, id){ nodes = [c.getElementById(id)]; return ""; })
+    !s.replace(reSimpleId, function(m, id){ var e; (e = c.getElementById(id) ) !== null && nodes.push(e); return ""; })
     || !s.replace(reSimpleClass, function(m, cl){ nodes = slice(c.getElementsByClassName(cl)); return ""; })
     || (nodes = slice(c.querySelectorAll(s)));
     return nodes;
   }, NodeMap = new WeakMap(),
   GetNodes = function(o){
-    var n = NodeMap.get(this);
-    if(n === undef){ n = []; NodeMap.set(this, n); }
+    var n = NodeMap.get(o);
+    if(n === undef){ n = []; NodeMap.set(o, n); }
     return n;
   };
   Zp = Zero.prototype = Zero.fn = {};
@@ -94,7 +94,7 @@
     "constructor": {value: Zero},
     "length": { get: function(){ return this.nodes.length; } },
     "nodes": {
-      set: function(a){ var n = GetNodes(this); n.length = 0; n.push.apply(n, a); },
+      set: function(a){ NodeMap.set(this, a); },
       get: function(){ return GetNodes(this); }
     }
   });

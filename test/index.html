@@ -61,25 +61,34 @@
     </p>
   </div>
   <div id="test-only">
+    <div class="testing"></div>
     <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
+    <div class="testing"></div>
+    <div><abbr></abbr></div>
     <div><h1><i></i><small>testing testing testing!</small></h1></div>
-
+    <abbr></abbr>
   </div>
   <div class="row">
     <div class="span12">
       <pre><code id="tests">Test Results: </code></pre>
       <script src="MrT.js"></script>
       <script type="text/javascript">
-        MrT('simple selector gets correct single node', function(t){
+        MrT('simple ID selector gets correct single node', function(t){
           var d = $('#test-only');
-          if(d.length === 1 && d.get() === d[0] && d.get() === document.getElementById('test-only')){
-            t.pass();
-          }
+          if(d.length === 1 && d.get() === d[0] && d.get() === document.getElementById('test-only')){ t.pass(); }
           t.fail();
         });
+        MrT('simple Tag selector gets correct nodes', function(t){
+          var d = $('abbr');
+          if(d.length === 2 && d.get() === d[0] && d.get(1) === document.getElementsByTagName('abbr')[1]){ t.pass(); }
+          t.fail();
+        });
+        MrT('simple Class selector gets correct nodes', function(t){
+          var d = $('.testing');
+          if(d.length === 2 && d.get() === d[0] && d.get(1) === document.getElementsByClassName('testing')[1]){ t.pass(); }
+          t.fail();
+        });
+
         MrT('complex selector get correct single node', function(t){
           var d = $('body #test-only > div:nth-child(5) *:first-child i + small');
           if(d.length === 1 && d.get() === d[0] && d.text() === 'testing testing testing!'){

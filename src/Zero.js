@@ -19,6 +19,8 @@
 })(function(){
   var VERSION = "0.0.1",
     reType = /^\[object ([^\]]+)\]$/,
+    reSimpleId = /^#([A-Za-z_-][A-Za-z0-9_-]*)$/,
+    reSimpleClass = /^\.([A-Za-z_-][A-Za-z0-9_-]*)$/,
     undef,
     noop = function(){},
     slice = function(o){ return Array.prototype.slice.call(o); },
@@ -44,7 +46,12 @@
       if(s[0] === '<'){ //assume a DOM string!
         this.nodes = slice(createDOM(s));
       }else{ //selector
-        this.nodes = slice((c||document).querySelectorAll(s));
+        if(c instanceof Zero){ return c.find(s); }
+        if(c !== undef && c.nodeType){
+          this.nodes = Query(s, c);
+        }else{
+          this.nodes = Query(s, document);
+        }
       }
     }else{
       //not nodelist, DOMElement, or string. FAIL!
@@ -54,11 +61,20 @@
   }
   var arrayAccess = function(z){
     z.each(function(i){ z[i] = this; });
+  }, Query = function(s,c){
+    var nodes = [];
+    !s.replace(reSimpleId, function(m, id){ nodes = [c.getElementById(id)]; return ""; })
+    || !s.replace(reSimpleClass, function(m, cl){ nodes = slice(c.getElementsByClassName(cl)); return ""; })
+    || (nodes = slice(c.querySelectorAll(s)));
+    return nodes;
   };
-  Zp = Zero.prototype = Zero.fn = { "nodes": [] };
-  Object.defineProperty(Zp, "VERSION", { value: VERSION });
-  Object.defineProperty(Zp, "constructor", {value: Zero});
-  Object.defineProperty(Zp, "length", { get: function(){ return this.nodes.length; } });
+  Zp = Zero.prototype = Zero.fn = {};
+  Object.defineProperties(Zp, {
+    "VERSION": { value: VERSION },
+    "constructor": {value: Zero},
+    "length": { get: function(){ return this.nodes.length; } },
+    "nodes": { value: [], writable: true}
+  });
   //subset of results.
   Zp.find = function(sel){
     var z = new Zero(); //out holder for results.

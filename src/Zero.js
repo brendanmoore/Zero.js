@@ -236,7 +236,7 @@
       for(var i in obj){
         if(hasProp(obj,i)){
           try{
-            this.style[i] = camelCase(obj[i]);
+            this.style[camelCase(i)] = obj[i];
           }catch(e){
             /*Unsupported Property*/
           }

@@ -19,8 +19,8 @@
 })(function(){
   var VERSION = "0.0.1",
     reType = /^\[object ([^\]]+)\]$/,
-    reSimpleId = /^#([A-Za-z_-][A-Za-z0-9_-]*)$/,
-    reSimpleClass = /^\.([A-Za-z_-][A-Za-z0-9_-]*)$/,
+    reSimpleId = /^#([A-Za-z_-][\w-]*)$/,
+    reSimpleClass = /^\.([A-Za-z_-][\w-]*)$/,
     reSimpleTag = /^([A-Za-z][A-Za-z_-]*)$/,
     undef,
     noop = function(){},

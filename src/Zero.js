@@ -21,17 +21,32 @@
     reType = /^\[object ([^\]]+)\]$/,
     reSimpleId = /^#([A-Za-z_-][A-Za-z0-9_-]*)$/,
     reSimpleClass = /^\.([A-Za-z_-][A-Za-z0-9_-]*)$/,
+    reSimpleTag = /^([A-Za-z][A-Za-z_-]*)$/,
     undef,
     noop = function(){},
     slice = function(o){ return Array.prototype.slice.call(o); },
     hasProp = function(o,p){ return Object.prototype.hasOwnProperty.call(o, p); };
+  //weakmap shim
+  if(typeof(WeakMap) === 'undefined'){
+    //a really crappy weakmap standin...
+    var ShimWeakMap = function(){};
+    ShimWeakMap.prototype = {
+      keys: [], values: [],
+      set: function(key, value){ var i = this.keys.indexOf(key); if(!!~i){ this.values[i] = value; }else{ this.keys.push(key); this.values.push(value); } },
+      get: function(key){ var i = this.keys.indexOf(key); return !!~i ? this.values[i] : undef; },
+      has: function(key){ return !!~this.keys.indexOf(key); },
+     'delete': function(key){ var i = this.keys.indexOf(key); if(!!~i){ this.keys.splice(i,1); this.values.splice(i,1); } }
+    };
+    console.log('Had to shim the WeakMap! Not ideal!');
+    window.WeakMap = ShimWeakMap;
+  }
+
   function Zero(s,c){
     var type;
     //passthru in double case
     if(s instanceof Zero){ return s; }
     //in case we called this without 'new' (most common case!)
     if(!(this instanceof Zero)){ return new Zero(s,c); }
-    this.nodes = [];
     //now do different things based on what was passed (see jQuery source! blatantly used their tests)
     if(!s){ return this; }
     //DOM Element
@@ -67,22 +82,27 @@
     || !s.replace(reSimpleClass, function(m, cl){ nodes = slice(c.getElementsByClassName(cl)); return ""; })
     || (nodes = slice(c.querySelectorAll(s)));
     return nodes;
+  }, NodeMap = new WeakMap(),
+  GetNodes = function(o){
+    var n = NodeMap.get(this);
+    if(n === undef){ n = []; NodeMap.set(this, n); }
+    return n;
   };
   Zp = Zero.prototype = Zero.fn = {};
   Object.defineProperties(Zp, {
     "VERSION": { value: VERSION },
     "constructor": {value: Zero},
     "length": { get: function(){ return this.nodes.length; } },
-    "nodes": { value: [], writable: true}
+    "nodes": {
+      set: function(a){ var n = GetNodes(this); n.length = 0; n.push.apply(n, a); },
+      get: function(){ return GetNodes(this); }
+    }
   });
   //subset of results.
   Zp.find = function(sel){
     var z = new Zero(); //out holder for results.
-    this.each(function(){
-      slice(this.querySelectorAll(sel)).forEach(function(n){
-        z.nodes.push(n);
-      });
-    });
+    var nodes = GetNodes(z);
+    this.each(function(){ Query(sel, this).forEach(function(n){ nodes.push(n); }); });
     arrayAccess(z);
     return z;
   };
@@ -217,22 +237,7 @@
       }
     });
   };
-  //Event binding/delegation
-  //Unfortunately we need to keep a reference to the bound functions, so that we can unbind ALL
-  //at once. And we want to use a WeakMap for that but our browser probably doesn't support that, so we'll have to shim it...
-  if(typeof(WeakMap) === 'undefined'){
-    //a really crappy weakmap standin...
-    var ShimWeakMap = function(){}
-    ShimWeakMap.prototype = {
-      keys: [], values: [],
-      set: function(key, value){ var i = this.keys.indexOf(key); if(!!~i){ this.values[i] = value; }else{ this.keys.push(key); this.values.push(value); } },
-      get: function(key){ var i = this.keys.indexOf(key); return !!~i ? this.values[i] : undef; },
-      has: function(key){ return !!~this.keys.indexOf(key); },
-     'delete': function(key){ var i = this.keys.indexOf(key); if(!!~i){ this.keys.splice(i,1); this.values.splice(i,1); } }
-    };
-    console.log('Had to shim the WeakMap! Not ideal!');
-    window.WeakMap = ShimWeakMap;
-  }
+  /* Event binding/delegation */
   //this will hold our events.
   var Events = new WeakMap();
   //We put a wrapper around this, so the object is always in the WeakMap.

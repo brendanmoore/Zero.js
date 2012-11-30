@@ -28,7 +28,7 @@
     slice = function(o){ return Array.prototype.slice.call(o); },
     hasProp = function(o,p){ return Object.prototype.hasOwnProperty.call(o, p); },
     firstCamelCase = function (all, l) { return l.toUpperCase(); },
-    camelCase = function(s) { return s.replace(rdashAlpha, firstCamelCase); };
+    camelCase = function(s) { return s.replace(reDashAlpha, firstCamelCase); };
   //weakmap shim
   if(typeof(WeakMap) === 'undefined'){
     //a really crappy weakmap standin...

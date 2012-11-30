@@ -22,10 +22,13 @@
     reSimpleId = /^#([A-Za-z_-][\w-]*)$/,
     reSimpleClass = /^\.([A-Za-z_-][\w-]*)$/,
     reSimpleTag = /^([A-Za-z][A-Za-z_-]*)$/,
+    reDashAlpha = /-([a-z])/ig,
     undef,
     noop = function(){},
     slice = function(o){ return Array.prototype.slice.call(o); },
-    hasProp = function(o,p){ return Object.prototype.hasOwnProperty.call(o, p); };
+    hasProp = function(o,p){ return Object.prototype.hasOwnProperty.call(o, p); },
+    firstCamelCase = function (all, l) { return l.toUpperCase(); },
+    camelCase = function(s) { return s.replace(rdashAlpha, firstCamelCase); };
   //weakmap shim
   if(typeof(WeakMap) === 'undefined'){
     //a really crappy weakmap standin...
@@ -232,7 +235,11 @@
     return this.each(function(){
       for(var i in obj){
         if(hasProp(obj,i)){
-          this.style[i] = obj[i];
+          try{
+            this.style[i] = camelCase(obj[i]);
+          }catch(e){
+            /*Unsupported Property*/
+          }
         }
       }
     });
